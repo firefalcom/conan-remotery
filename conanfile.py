@@ -1,4 +1,6 @@
-from conans import ConanFile, CMake, tools
+from conan import ConanFile
+from conan.tools.files import copy
+from os.path import join
 
 
 class RemoteryConan(ConanFile):
@@ -16,17 +18,14 @@ class RemoteryConan(ConanFile):
         self.run("cd Remotery && git checkout %s" % remotery_version)
 
     def package(self):
-
-        self.copy("*.h", dst="include", src="Remotery/lib" )
-        self.copy("*.c", dst="src", src="Remotery/lib" )
-        self.copy("*.mm", dst="src", src="Remotery/lib" )
-
-        self.copy("*", dst="js_client", src="Remotery/vis" )
+        copy(self, "*.h", join(self.source_folder, "Remotery/lib"), join(self.package_folder, "include"))
+        copy(self, "*.c", join(self.source_folder, "Remotery/lib"), join(self.package_folder, "src"))
+        copy(self, "*.mm", join(self.source_folder, "Remotery/lib"), join(self.package_folder, "src"))
+        copy(self, "*", join(self.source_folder, "Remotery/vis"), join(self.package_folder, "js_client"))
 
     def package_id(self):
-        self.info.header_only()
+        self.info.clear()
 
     def package_info(self):
         self.cpp_info.includedirs = ['include']
         self.cpp_info.srcdirs = ['src']
-
